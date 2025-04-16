@@ -20,7 +20,7 @@ class AuthorModelTest(TestCase):
 
 class BookModelTest(TestCase):
     """Test cases for the Book model"""
-    
+
     def setUp(self):
         """Create test book and related objects"""
         self.author = Author.objects.create(
@@ -51,3 +51,27 @@ class BookModelTest(TestCase):
         self.assertEqual(self.book.categories.first().name, "Dystopian")
         self.assertEqual(self.book.slug, "1984")
 
+class AdminAccessTest(TestCase):
+    """Test cases for admin access"""
+    
+    def setUp(self):
+        """Create admin user"""
+        self.admin_user = User.objects.create_superuser(
+            username='admin',
+            email='admin@example.com',
+            password='adminpassword'
+        )
+        self.client.login(username='admin', password='adminpassword')
+    
+    def test_admin_access(self):
+        """Test admin site accessibility"""
+        response = self.client.get(reverse('admin:index'))
+        self.assertEqual(response.status_code, 200)
+    
+    def test_model_admin_access(self):
+        """Test access to model admin pages"""
+        models = ['author', 'book', 'category', 'publisher', 'publication']
+        
+        for model in models:
+            response = self.client.get(reverse(f'admin:library_{model}_changelist'))
+            self.assertEqual(response.status_code, 200)
