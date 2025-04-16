@@ -33,3 +33,18 @@ class Author(models.Model):
     def is_alive(self):
         """Check if author is alive"""
         return self.death_date is None
+
+class AuthorProfile(models.Model):
+    """Extended information about author (One-to-One relationship)"""
+    author = models.OneToOneField(
+        Author, 
+        on_delete=models.CASCADE,
+        primary_key=True,
+        related_name='profile'
+    )
+    biography = models.TextField(blank=True)
+    website = models.URLField(blank=True)
+    photo = models.ImageField(upload_to='authors/', blank=True)
+    
+    def __str__(self):
+        return f"Profile for {self.author.name}"
