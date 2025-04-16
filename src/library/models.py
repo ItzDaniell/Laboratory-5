@@ -57,3 +57,34 @@ class Publisher(models.Model):
 
     def __str__(self):
         return self.name
+    
+class Book(models.Model):
+    """Book model with various relationships"""
+    title = models.CharField(max_length=200)
+    subtitle = models.CharField(max_length=200, blank=True)
+    slug = models.SlugField(unique=True)
+    publication_date = models.DateField(null=True, blank=True)
+    isbn = models.CharField('ISBN', max_length=20, unique=True)
+    page_count = models.PositiveIntegerField(null=True, blank=True)
+    cover = models.ImageField(upload_to='covers/', blank=True)
+    summary = models.TextField(blank=True)
+    
+    # One-to-Many relationship: One author can write many books
+    author = models.ForeignKey(
+        Author,
+        on_delete=models.CASCADE,
+        related_name='books'
+    )
+    
+    # Many-to-Many relationship: A book can have multiple categories
+    categories = models.ManyToManyField(
+        Category,
+        related_name='books'
+    )
+    
+    # Many-to-Many relationship with an intermediate model
+    publishers = models.ManyToManyField(
+        Publisher,
+        through='Publication',
+        related_name='books'
+    )
