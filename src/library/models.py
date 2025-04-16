@@ -19,3 +19,17 @@ class Category(models.Model):
         if not self.slug:
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
+
+class Author(models.Model):
+    """Book author"""
+    name = models.CharField(max_length=200)
+    birth_date = models.DateField(null=True, blank=True)
+    death_date = models.DateField(null=True, blank=True)
+    
+    def __str__(self):
+        return self.name
+    
+    @property
+    def is_alive(self):
+        """Check if author is alive"""
+        return self.death_date is None
