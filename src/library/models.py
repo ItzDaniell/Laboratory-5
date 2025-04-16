@@ -48,3 +48,12 @@ class AuthorProfile(models.Model):
     
     def __str__(self):
         return f"Profile for {self.author.name}"
+
+class Publisher(models.Model):
+    """Book publisher"""
+    name = models.CharField(max_length=200)
+    address = models.TextField(blank=True)
+    website = models.TextField(blank=True)
+
+    def __str__(self):
+        return self.name
