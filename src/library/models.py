@@ -88,3 +88,27 @@ class Book(models.Model):
         through='Publication',
         related_name='books'
     )
+
+    class Meta:
+        ordering = ['-publication_date', 'title']
+    
+    def __str__(self):
+        return self.title
+    
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
+        super().save(*args, **kwargs)
+        
+class Publication(models.Model):
+    """Intermediate model for Book-Publisher many-to-many relationship"""
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    publisher = models.ForeignKey(Publisher, on_delete=models.CASCADE)
+    publication_date = models.DateField()
+    edition = models.PositiveIntegerField(default=1)
+    
+    class Meta:
+        unique_together = ('book', 'publisher', 'edition')
+    
+    def __str__(self):
+        return f"{self.book.title} ({self.edition}ed.) by {self.publisher.name}"
